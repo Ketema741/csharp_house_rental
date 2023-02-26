@@ -46,11 +46,19 @@ public class HousesController : ControllerBase
         }
 
         var owner = await _realtorServices.GetAsync(house.realtorId);
-
+        
+        var ownerWithoutSensitiveInfo = new
+        {
+            Name = owner.fullName,
+            Email = owner.email,
+            Phone = owner.phone,
+            Specializations = owner.specializations,
+            ExperienceYear = owner.experienceYear,
+        };
         var houseWithOwner = new HouseWithOwner
         {
             House = house,
-            Owner = owner
+            Owner = ownerWithoutSensitiveInfo
         };
 
         return houseWithOwner;
