@@ -21,7 +21,6 @@ public class AuthController : ControllerBase
     private readonly JwtConfiguration _jwtConfiguration;
     private readonly RetailorsService _realtorServices;
 
-    // private List<User> _users= new List<User> {new User{Id = "124", Name = "Getu" }};
 
     public AuthController(ILogger<AuthController> logger, IOptions<JwtConfiguration> jwtConfiguration, RetailorsService realtorServices)
     {

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Security.Claims;
 using System.IdentityModel.Tokens.Jwt;
+using System.Text.RegularExpressions;
 
 namespace HouseStoreApi.Controllers;
 
@@ -14,12 +15,13 @@ namespace HouseStoreApi.Controllers;
 public class HousesController : ControllerBase
 {
     private readonly HousesService _housesService;
-    //private readonly RetailorsService _retailorService;
+    private readonly RetailorsService _realtorServices;
 
-    public HousesController(HousesService housesService)
+
+    public HousesController(HousesService housesService, RetailorsService realtor)
     {
         _housesService = housesService;
-        // _retailorService = retailorsService;
+        _realtorServices = realtor;
 
     }
 
@@ -28,13 +30,14 @@ public class HousesController : ControllerBase
     public async Task<List<House>> Get() =>
         await _housesService.GetAsync();
 
-    // [HttpGet("retailors")]
-    // public async Task<List<Retailor>> GetRetailor() =>
-    //     await _retailorService.GetAsync();
-
     [HttpGet("{id:length(24)}"), AllowAnonymous]
-    public async Task<ActionResult<House>> Get(string id)
+    public async Task<ActionResult<HouseWithOwner>> Get(string id)
     {
+        if (!Regex.IsMatch(id, "^[0-9a-fA-F]{24}$"))
+        {
+            return NotFound();
+        }
+
         var house = await _housesService.GetAsync(id);
 
         if (house is null)
@@ -42,8 +45,24 @@ public class HousesController : ControllerBase
             return NotFound();
         }
 
-        return house;
+        var owner = await _realtorServices.GetAsync(house.realtorId);
+
+        var houseWithOwner = new HouseWithOwner
+        {
+            House = house,
+            Owner = owner
+        };
+
+        return houseWithOwner;
     }
+
+    public class HouseWithOwner
+    {
+        public object House { get; set; }
+        public object Owner { get; set; }
+    }
+
+
 
     [Authorize(Roles = "Realtor")]
     [HttpPost]
@@ -62,10 +81,10 @@ public class HousesController : ControllerBase
         {
             return BadRequest("The realtor ID claim is missing or has a different name.");
         }
-        
+
         var realtorId = idClaim.Value;
 
-         if (realtorId == "")
+        if (realtorId == "")
         {
             return BadRequest("The realtor ID claim is missing or has a different name.");
         }
@@ -91,21 +110,21 @@ public class HousesController : ControllerBase
         {
             return BadRequest("The realtor ID claim is missing or has a different name.");
         }
-        
+
         var realtorId = idClaim.Value;
 
         var house = await _housesService.GetAsync(id);
 
-        if ( house == null )
+        if (house == null)
         {
             return NotFound();
         }
-         if (realtorId == "" || house.realtorId != realtorId)
+        if (realtorId == "" || house.realtorId != realtorId)
         {
-            
+
             return BadRequest("House does not belongs to this user");
         }
-        
+
         updatedHouse.Id = house.Id;
 
         await _housesService.UpdateAsync(id, updatedHouse);
@@ -126,17 +145,17 @@ public class HousesController : ControllerBase
         {
             return BadRequest("The realtor ID claim is missing or has a different name.");
         }
-        
+
         var realtorId = idClaim.Value;
         var house = await _housesService.GetAsync(id);
 
-         if ( house == null )
+        if (house == null)
         {
             return NotFound();
         }
-         if (realtorId == "" || house.realtorId != realtorId)
+        if (realtorId == "" || house.realtorId != realtorId)
         {
-            
+
             return BadRequest("House does not belongs to this user");
         }
 
