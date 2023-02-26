@@ -1,0 +1,7 @@
+C:\Users\USER\Desktop\house\HouseStoreApi\obj\Debug\net7.0\HouseStoreApi.csproj.AssemblyReference.cache
+C:\Users\USER\Desktop\house\HouseStoreApi\obj\Debug\net7.0\HouseStoreApi.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\USER\Desktop\house\HouseStoreApi\obj\Debug\net7.0\HouseStoreApi.AssemblyInfoInputs.cache
+C:\Users\USER\Desktop\house\HouseStoreApi\obj\Debug\net7.0\HouseStoreApi.AssemblyInfo.cs
+C:\Users\USER\Desktop\house\HouseStoreApi\obj\Debug\net7.0\HouseStoreApi.csproj.CoreCompileInputs.cache
+C:\Users\USER\Desktop\house\HouseStoreApi\obj\Debug\net7.0\HouseStoreApi.MvcApplicationPartsAssemblyInfo.cs
+C:\Users\USER\Desktop\house\HouseStoreApi\obj\Debug\net7.0\HouseStoreApi.MvcApplicationPartsAssemblyInfo.cache
