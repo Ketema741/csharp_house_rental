@@ -32,7 +32,7 @@ public class HousesController : ControllerBase
     // public async Task<List<Retailor>> GetRetailor() =>
     //     await _retailorService.GetAsync();
 
-    [HttpGet("{id:length(24)}")]
+    [HttpGet("{id:length(24)}"), AllowAnonymous]
     public async Task<ActionResult<House>> Get(string id)
     {
         var house = await _housesService.GetAsync(id);
