@@ -49,13 +49,36 @@ public class AuthController : ControllerBase
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] Retailor userDto)
     {
-        var user = new Retailor { fullName = userDto.fullName, phone = userDto.phone, email = userDto.email, password = userDto.password, specializations = userDto.specializations, experienceYear = userDto.experienceYear, description = userDto.description, activityRange = userDto.activityRange };
+        // Check if the email already exists in the database
+        var existingUser = await _realtorServices.GetAsyncEmail(userDto.email);
+        if (existingUser != null)
+        {
+            return BadRequest("Email already exists");
+        }
+
+        // Create a new user
+        var user = new Retailor
+        {
+            fullName = userDto.fullName,
+            phone = userDto.phone,
+            email = userDto.email,
+            password = userDto.password,
+            specializations = userDto.specializations,
+            experienceYear = userDto.experienceYear,
+            description = userDto.description,
+            activityRange = userDto.activityRange
+        };
+
+        // Add the user to the database
         await _realtorServices.CreateAsync(user);
 
         // Get the newly created user from the database to get the ID
         var createdUser = await _realtorServices.GetAsyncEmail(user.email);
 
+        // Generate a token for the user
         var token = GenerateToken(createdUser, "Realtor");
+
+        // Return the user and the token in the response
         return CreatedAtAction(nameof(Get), new { token = token }, user);
     }
 
