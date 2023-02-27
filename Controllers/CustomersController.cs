@@ -1,9 +1,11 @@
 using HouseStoreApi.Models;
 using HouseStoreApi.Services;
 using Microsoft.AspNetCore.Mvc;
-
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 namespace HouseStoreApi.Controllers;
 
+[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 [ApiController]
 [Route("api/[controller]")]
 public class CustomerController : ControllerBase
@@ -17,12 +19,12 @@ public class CustomerController : ControllerBase
 
     }
         
-    [HttpGet]
+    [HttpGet, AllowAnonymous]
     public async Task<List<Customer>> Get() =>
         await _customersService.GetAsync();
     
    
-    [HttpGet("{id:length(24)}")]
+    [HttpGet("{id:length(24)}"),AllowAnonymous]
     public async Task<ActionResult<Customer>> Get(string id)
     {
         var customer = await _customersService.GetAsync(id);

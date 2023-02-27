@@ -31,20 +31,29 @@ public class AuthController : ControllerBase
 
     [HttpGet]
     public async Task<ActionResult<List<Retailor>>> Get() { return Ok(await _realtorServices.GetAsync()); }
-
+    
     [HttpPost("login")]
     public async Task<IActionResult> Login(Retailor user)
     {
-        var retailor = await _realtorServices.GetAsyncEmail(user.email);
+        var realtor = await _realtorServices.GetAsyncEmail(user.email);
 
-        if (retailor == null || retailor.password != user.password)
+        if (realtor == null)
         {
-            return Unauthorized();
+            return BadRequest("Email is not registered");
         }
 
-        var token = GenerateToken(retailor, "Realtor");
-        return Ok(token);
+        if (realtor.password != user.password)
+        {
+            return BadRequest("Password is incorrect");
+        }
+
+        var token = GenerateToken(realtor, "Realtor");
+
+        // Return the token and a message indicating successful login
+        return Ok(new { message = "Logged in successfully", token });
     }
+
+
 
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] Retailor userDto)
