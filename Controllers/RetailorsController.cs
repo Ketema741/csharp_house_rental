@@ -23,11 +23,20 @@ public class RetailorsController : ControllerBase
     }
 
     [HttpGet, AllowAnonymous]
-    public async Task<List<Retailor>> Get() =>
-        await _retailorsService.GetAsync();
+    public async Task<List<Retailor>> Get()
+    {
+        var retailors = await _retailorsService.GetAsync();
+
+        foreach (var retailor in retailors)
+        {
+            retailor.password = null;
+        }
+
+        return retailors;
+    }
 
 
-    [HttpGet("{id:length(24)}"), AllowAnonymous]
+        [HttpGet("{id:length(24)}"), AllowAnonymous]
     public async Task<ActionResult<Retailor>> Get(string id)
     {
         var retailor = await _retailorsService.GetAsync(id);
@@ -37,7 +46,23 @@ public class RetailorsController : ControllerBase
             return NotFound();
         }
 
-        return retailor;
+        if (retailor is null)
+        {
+            return NotFound();
+        }
+
+        var retailorWithoutPassword = new Retailor
+        {
+            Id = retailor.Id,
+            fullName = retailor.fullName,
+            email = retailor.email,
+            phone = retailor.phone,
+            // set password to null to avoid returning it
+            password = null
+        };
+
+        return retailorWithoutPassword;
+
     }
 
 
